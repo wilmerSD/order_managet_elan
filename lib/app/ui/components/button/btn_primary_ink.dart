@@ -29,9 +29,9 @@ class BtnPrimaryInk extends StatelessWidget {
         boxShadow: showBoxShadow
             ? [
                 BoxShadow(
-                  color: const Color.fromARGB(255, 185, 185, 185),
-                  spreadRadius: 5,
-                  blurRadius: 20,
+                  color: AppColors.primaryConst,
+                  spreadRadius: 2.0,
+                  blurRadius: 10.0,
                   offset: const Offset(0, 4),
                 ),
               ]
@@ -57,8 +57,8 @@ class BtnPrimaryInk extends StatelessWidget {
                             width: 30.0,
                           ),
                           SizedBox(
-                            width: 20,
-                            height: 20,
+                            width: 20.0,
+                            height: 20.0,
                             child: CircularProgressIndicator(
                               color: Colors.white,
                             ),

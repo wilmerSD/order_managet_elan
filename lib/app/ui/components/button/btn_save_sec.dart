@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:order_manager/core/theme/app_colors.dart';
 import 'package:order_manager/core/theme/app_text_style.dart';
 
@@ -30,9 +29,9 @@ class BtnSaveSec extends StatelessWidget {
         boxShadow: showBoxShadow
             ? [
                 BoxShadow(
-                  color: const Color.fromARGB(255, 185, 185, 185),
-                  spreadRadius: 5,
-                  blurRadius: 20,
+                  color: AppColors.primaryConst,
+                  spreadRadius: 1,
+                  // blurRadius: 5,
                   offset: const Offset(0, 4),
                 ),
               ]
@@ -49,7 +48,7 @@ class BtnSaveSec extends StatelessWidget {
                 Text(
                   text,
                   style: AppTextStyle(context)
-                      .bold18(color: AppColors.backgroundColor(context)),
+                      .bold15(color: AppColors.backgroundColor(context)),
                 ),
                 loading
                     ? const Row(

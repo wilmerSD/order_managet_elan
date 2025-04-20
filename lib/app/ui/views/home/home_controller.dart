@@ -5,22 +5,36 @@ import 'package:intl/intl.dart';
 
 import 'package:order_manager/app/models/repository/repository_general.dart';
 import 'package:order_manager/app/models/response/response_list_order.dart';
+import 'package:order_manager/core/helpers/custom_snackbar.dart';
+import 'package:order_manager/core/theme/app_colors.dart';
 
 class HomeController with ChangeNotifier {
   //INSTANCIA
   RepositoryGeneral orderRepository = RepositoryGeneral();
 
   //VARIABLES
-  List<ResponseListOrder> listOrders = [];
+  List<ResponseListOrder> _listOrders = [];
+  set listOrders(List<ResponseListOrder> value) {
+    _listOrders = value;
+    notifyListeners();
+  }
+
+  List<ResponseListOrder> get listOrders => _listOrders;
+
   ResponseListOrder ordersObject = ResponseListOrder();
 
   String _fullName = '';
+  int _optionOrders = 0;
+  set optionOrders(int value){
+    _optionOrders = value;
+    notifyListeners();
+  }
   set fullName(String value) {
     _fullName = value;
     notifyListeners();
   }
-
   String get fullName => _fullName;
+  int get optionOrders => _optionOrders;
 
   //FUNCIONES
   late Timer timer;
@@ -46,46 +60,54 @@ class HomeController with ChangeNotifier {
 
   // Obtiene la hora formateada
   String get currentTime => _currentTime;
+
   bool _isGettingListOrders = false;
+  
   set isGettingListOrders(bool value) {
     _isGettingListOrders = value;
     notifyListeners();
   }
+
+
   bool get isGettingListOrders => _isGettingListOrders;
-  Future<void> obtenerPedidosPendientes() async {
+  
+
+  Future<void> getOrderProcessing(BuildContext context, String status) async {
+    listOrders = [];
     isGettingListOrders = true;
     try {
-      final response = await orderRepository.getPedidosPendientes();
-
-      if (response.isEmpty) {
-        /*  CustomSnackbar.showSnackBarSuccess(
-      context,
-      title: "Pedidos",
-      message: "No hay pedidos pendientes por ahora",
-    ); */
-        // return;
-      }
+      final response = await orderRepository.getOrderProcessing(status);
       listOrders = response;
-      /* print(listOrders);
-      listOrders.map((order) {
-        debugPrint("hola1");
-        final customerName = order.billing?.firstName ?? 'Sin nombre';
-        final customerLastName = order.billing?.lastName ?? '';
-        final items = order.lineItems ?? [];
-        print(items.length);
-        debugPrint(items.toString());
-      }); */
-      // Aquí puedes usar `pedidos` directamente para mostrar en pantalla
     } catch (e) {
-      print(e);
-      /*  CustomSnackbar.showSnackBarSuccess(
-    context,
-    title: "Error",
-    message: "No se pudieron obtener los pedidos: $e",
-  ); */
+      CustomSnackbar.showSnackBarCustom(
+        context,
+        title: "Error",
+        message: "Ups... No se pudieron obtener los pedidos: $e",
+        color: AppColors.errorColor,
+      );
     } finally {
       isGettingListOrders = false;
-      notifyListeners();
+    }
+  }
+
+  bool _isUpdatingOrder = false;
+  set isUpdatingOrder(bool value) {
+    _isUpdatingOrder = value;
+    notifyListeners();
+  }
+
+  bool get isUpdatingOrder => _isUpdatingOrder;
+  Future<void> postUpdateOrder(int orderId) async {
+    isUpdatingOrder = true;
+    try {
+      final response = await orderRepository.postUpdateOrder(orderId);
+      if (response.status == 'completed') {
+        listOrders.removeWhere((order) => order.id == orderId);
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      isUpdatingOrder = false;
     }
   }
 }

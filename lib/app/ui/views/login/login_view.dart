@@ -5,8 +5,26 @@ import 'package:order_manager/app/ui/views/login/login_controller.dart';
 import 'package:order_manager/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
-class LoginView extends StatelessWidget {
+class LoginView extends StatefulWidget {
   const LoginView({super.key});
+
+  @override
+  State<LoginView> createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+  @override
+  void initState(){
+    
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      final loginController = Provider.of<LoginController>(
+        context,
+        listen: false,
+      );
+      await loginController.getCredentials();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +34,10 @@ class LoginView extends StatelessWidget {
     Widget password = FieldForm(
       label: "Contraseña",
       hintText: "Ingresa tu contraseña",
-      privateText: true,
-      suffix: GestureDetector(
-        onTap: () {
-          //logincontroller.toggleVisibility(); // Método para cambiar la visibilidad
-        },
-        child: Icon(
+      privateText: logincontroller.visiblePassword,
+      suffix: IconButton(
+        onPressed: () => logincontroller.visiblePassword = !logincontroller.visiblePassword,
+        icon: Icon(
           logincontroller.isVisibleIcon
               ? Icons.visibility
               : Icons.visibility_off,
@@ -41,11 +57,28 @@ class LoginView extends StatelessWidget {
     );
     Widget button = BtnPrimaryInk(
       text: "Ingresar",
-
+      loading: logincontroller.isValidating,
       onTap: () => logincontroller.login(context),
     );
+
+    Widget rememberPass = InkWell(
+      onTap: () {
+        logincontroller.rememberPass = !logincontroller.rememberPass;
+      },
+      child: Row(
+        children: [
+          Checkbox(
+            activeColor: AppColors.primary(context),
+            value: logincontroller.rememberPass,
+            onChanged: (_) {
+              logincontroller.rememberPass = !logincontroller.rememberPass;
+            },
+          ),
+          const Text("Recordar datos"),
+        ],
+      ),
+    );
     return Scaffold(
-      backgroundColor: AppColors.backgroundColor(context),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Center(
@@ -53,7 +86,7 @@ class LoginView extends StatelessWidget {
             width: 350.0,
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
             decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 244, 244, 244),
+              color: AppColors.backgroundColor(context),
               borderRadius: BorderRadius.circular(8.0),
             ),
 
@@ -76,6 +109,8 @@ class LoginView extends StatelessWidget {
                 SizedBox(height: 25.0),
                 // Contraseña
                 password,
+                SizedBox(height: 25.0),
+                rememberPass,
                 SizedBox(height: 25.0),
                 //Boton
                 button,
