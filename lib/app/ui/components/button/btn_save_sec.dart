@@ -26,20 +26,12 @@ class BtnSaveSec extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(8.0),
-        boxShadow: showBoxShadow
-            ? [
-                BoxShadow(
-                  color: AppColors.primaryConst,
-                  spreadRadius: 1,
-                  // blurRadius: 5,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : [],
+       
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          borderRadius: BorderRadius.circular(8.0),
           onTap: onTap,
           child: Center(
             child: Row(
@@ -48,7 +40,7 @@ class BtnSaveSec extends StatelessWidget {
                 Text(
                   text,
                   style: AppTextStyle(context)
-                      .bold15(color: AppColors.backgroundColor(context)),
+                      .bold15(/* color: AppColors.backgroundColor(context) */),
                 ),
                 loading
                     ? const Row(

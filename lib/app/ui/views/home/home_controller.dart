@@ -19,22 +19,40 @@ class HomeController with ChangeNotifier {
     notifyListeners();
   }
 
+  Map<int, bool> _loadingOrders = {};
+
+  bool isOrderLoading(int orderId) => _loadingOrders[orderId] ?? false;
+
+  void setOrderLoading(int orderId, bool isLoading) {
+    _loadingOrders[orderId] = isLoading;
+    notifyListeners();
+  }
+
   List<ResponseListOrder> get listOrders => _listOrders;
 
   ResponseListOrder ordersObject = ResponseListOrder();
 
   String _fullName = '';
   int _optionOrders = 0;
-  set optionOrders(int value){
+  int _orderTotalProcessing = 0;
+  set optionOrders(int value) {
     _optionOrders = value;
     notifyListeners();
   }
+
+  set orderTotalProcessing(int value) {
+    _orderTotalProcessing = value;
+    notifyListeners();
+  }
+
   set fullName(String value) {
     _fullName = value;
     notifyListeners();
   }
+
   String get fullName => _fullName;
   int get optionOrders => _optionOrders;
+  int get orderTotalProcessing => _orderTotalProcessing;
 
   //FUNCIONES
   late Timer timer;
@@ -62,22 +80,54 @@ class HomeController with ChangeNotifier {
   String get currentTime => _currentTime;
 
   bool _isGettingListOrders = false;
-  
+
   set isGettingListOrders(bool value) {
     _isGettingListOrders = value;
     notifyListeners();
   }
 
-
   bool get isGettingListOrders => _isGettingListOrders;
-  
 
-  Future<void> getOrderProcessing(BuildContext context, String status) async {
-    listOrders = [];
-    isGettingListOrders = true;
+  Future<void> getOrderProcessing(String status) async {
     try {
       final response = await orderRepository.getOrderProcessing(status);
+      final existingIds =
+          listOrders
+              .map((o) => o.id)
+              .toSet(); // Filtrar solo los que no están ya en la lista
+      final toAdd = response.where((order) => !existingIds.contains(order.id));
+      listOrders.addAll(toAdd);
+    } catch (e) {
+      print(e);
+    } finally {} 
+  }
+
+  Future<void> getOrderCompleted(BuildContext context, String status) async {
+    listOrders = [];
+    isGettingListOrders = true;
+
+    try {
+      final response = await orderRepository.getOrderCompleted(status);
       listOrders = response;
+    } catch (e) {
+      print(e);
+    } finally {
+      isGettingListOrders = false;
+    }
+  }
+
+  Future<void> getOrderProcessingv1(BuildContext context, String status) async {
+    listOrders = [];
+    isGettingListOrders = true;
+
+    try {
+      final result = await orderRepository.getOrderProcessingv1(status);
+      listOrders = result.orders;
+      if (listOrders.isNotEmpty) {
+        listOrders.sort((a, b) => (a.id ?? 0).compareTo(b.id ?? 0));
+      }
+
+      orderTotalProcessing = result.total;
     } catch (e) {
       CustomSnackbar.showSnackBarCustom(
         context,
@@ -90,24 +140,56 @@ class HomeController with ChangeNotifier {
     }
   }
 
+  void listenNewOrder(newOrder) async {
+    if (orderTotalProcessing < 20) {
+      final pedidoMap = newOrder as Map<String, dynamic>;
+      final nuevoPedido = ResponseListOrder.fromJson(pedidoMap);
+      if (nuevoPedido.status == 'processing'){
+        listOrders.add(nuevoPedido);
+        orderTotalProcessing += 1;
+      }
+    }
+    
+  }
+
+  bool _isOrderDelivered = false;
   bool _isUpdatingOrder = false;
+
   set isUpdatingOrder(bool value) {
     _isUpdatingOrder = value;
     notifyListeners();
   }
 
+  set isOrderDelivered(bool value) {
+    _isOrderDelivered = value;
+    notifyListeners();
+  }
+
+  bool get isOrderDelivered => _isOrderDelivered;
   bool get isUpdatingOrder => _isUpdatingOrder;
-  Future<void> postUpdateOrder(int orderId) async {
+
+  Future<bool> postUpdateOrder(int orderId) async {
     isUpdatingOrder = true;
     try {
       final response = await orderRepository.postUpdateOrder(orderId);
       if (response.status == 'completed') {
         listOrders.removeWhere((order) => order.id == orderId);
+        getOrderProcessing('processing');
+        orderTotalProcessing -= 1;
+        return true;
       }
     } catch (e) {
       print(e);
     } finally {
+      _loadingOrders.remove(orderId);
       isUpdatingOrder = false;
     }
+    return false;
+  }
+
+  void removeOrderFromList(int orderId) {
+    orderTotalProcessing -= 1;
+    listOrders.removeWhere((order) => order.id == orderId);
+    notifyListeners();
   }
 }

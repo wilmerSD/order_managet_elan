@@ -68,13 +68,13 @@ class LoginController with ChangeNotifier {
     // Lista de usuarios válidos
     final users = [
       {
-        'email': eUser,
+        'email': eUser.toUpperCase() ,
         'password': ePassword,
         'name': 'Jose Wilmer',
         'lastName': 'Sánchez Díaz',
       },
       {
-        'email': eUser2,
+        'email': eUser2.toUpperCase() ,
         'password': ePassword2,
         'name': 'Luis',
         'lastName': 'Torres',
@@ -83,7 +83,7 @@ class LoginController with ChangeNotifier {
 
     // Buscar usuario válido
     final user = users.firstWhere(
-      (u) => u['email'] == email && u['password'] == password,
+      (u) => u['email'] == email.toUpperCase()  && u['password'] == password,
       orElse: () => {},
     );
 

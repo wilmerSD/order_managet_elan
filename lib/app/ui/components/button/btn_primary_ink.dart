@@ -40,6 +40,7 @@ class BtnPrimaryInk extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          borderRadius: BorderRadius.circular(8.0),
           onTap: onTap,
           child: Center(
             child: Row(

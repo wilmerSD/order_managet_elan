@@ -49,7 +49,7 @@ class AppTextStyle {
   );
 
   TextStyle bold16({
-    Color? color = AppColors.grayDark,
+    Color? color = Colors.white,
     FontWeight fontWeight = FontWeight.w700,
   }) => Theme.of(context).textTheme.bodyMedium!.copyWith(
     color: color,
@@ -59,7 +59,7 @@ class AppTextStyle {
   );
 
   TextStyle bold15({
-    Color? color = AppColors.grayDark,
+    Color? color = Colors.white,
     FontWeight fontWeight = FontWeight.w700,
   }) => Theme.of(context).textTheme.bodyMedium!.copyWith(
     color: color,
@@ -69,7 +69,7 @@ class AppTextStyle {
   );
 
   TextStyle bold14({
-    Color? color = AppColors.grayDark,
+    Color? color = Colors.white,
     FontWeight fontWeight = FontWeight.w500,
   }) => Theme.of(context).textTheme.bodyMedium!.copyWith(
     color: color,

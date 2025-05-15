@@ -4,12 +4,15 @@ import 'package:order_manager/app/ui/views/login/login_controller.dart';
 import 'package:order_manager/app/ui/views/splash/splash_view.dart';
 import 'package:order_manager/core/preferences/shared_preferences.dart';
 import 'package:order_manager/core/preferences/theme_provider.dart';
+import 'package:order_manager/core/service/sokect_service.dart';
 import 'package:order_manager/core/theme/theme_app.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await PreferencesUser.init();
+  // final socketService = SocketService();
+  // socketService.initSocket();
   // await initializeDateFormatting("ES", '');
   runApp(
     MultiProvider(
