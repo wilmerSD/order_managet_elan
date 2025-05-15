@@ -149,7 +149,6 @@ class HomeController with ChangeNotifier {
         orderTotalProcessing += 1;
       }
     }
-    
   }
 
   bool _isOrderDelivered = false;
