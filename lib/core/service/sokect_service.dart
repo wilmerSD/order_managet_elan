@@ -2,10 +2,11 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class SocketService {
   late IO.Socket socket;
-
+  final link = 'https://backend-elan.onrender.com';//Prod
+  // final link = 'https://7a6331c4c5e7.ngrok-free.app';//DEV
   void initSocket() {
     socket = IO.io(
-      'https://8545-181-176-231-118.ngrok-free.app', // usa la URL de ngrok actual
+      link,
       IO.OptionBuilder()
           .setTransports(['websocket']) // usa websocket puro
           .disableAutoConnect() // opcional si quieres conectar manualmente
@@ -29,8 +30,8 @@ class SocketService {
     });
   }
 
-  void sendIdOrderDelivered(id) {
-    socket.emit('order_delivered', id);
+  void sendIdOrderDelivered(id, status) {
+    socket.emit('order_delivered', {'orderId': id, 'status': status});
   }
 
   void dispose() {

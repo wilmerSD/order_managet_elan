@@ -11,6 +11,15 @@ class AppTextStyle {
         fontWeight: FontWeight.bold,
         fontFamily: 'Montserrat',
       );
+  TextStyle nroOrder({
+    Color? color = AppColors.primaryConst,
+    FontWeight fontWeight = FontWeight.w700,
+  }) => Theme.of(context).textTheme.bodyMedium!.copyWith(
+    color: color,
+    fontWeight: fontWeight,
+    fontSize: 30.0,
+    fontFamily: 'Montserrat',
+  );
 
   TextStyle bold26({Color color = AppColors.grayDark}) =>
       Theme.of(context).textTheme.titleLarge!.copyWith(

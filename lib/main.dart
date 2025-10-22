@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:order_manager/app/ui/views/home/home_controller.dart';
-import 'package:order_manager/app/ui/views/login/login_controller.dart';
+import 'package:order_manager/app/ui/views/home/home_provider.dart';
+import 'package:order_manager/app/ui/views/login/login_provider.dart';
 import 'package:order_manager/app/ui/views/splash/splash_view.dart';
 import 'package:order_manager/core/preferences/shared_preferences.dart';
 import 'package:order_manager/core/preferences/theme_provider.dart';

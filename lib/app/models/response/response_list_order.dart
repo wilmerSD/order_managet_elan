@@ -1,7 +1,7 @@
  class ResponseListOrder {
     final int? id;
     final int? parentId;
-    final String? status;
+    String? status;
     final String? currency;
     final String? version;
     final bool? pricesIncludeTax;

@@ -19,6 +19,12 @@ class AppColors {
         : const Color.fromARGB(255, 0, 0, 0); //light
   }
 
+  static Color textDropdown(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color.fromRGBO(250, 250, 250, 1) //dark
+        : const Color.fromRGBO(69, 60, 60, 1); //light
+  }
+
    static Color cardList(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
         ? const Color.fromRGBO(244, 231, 208, 1) //dark

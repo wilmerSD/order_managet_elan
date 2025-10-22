@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:order_manager/app/ui/components/button/btn_primary_ink.dart';
 import 'package:order_manager/app/ui/components/button/btn_save_sec.dart';
 import 'package:order_manager/app/ui/components/field_form.dart';
-import 'package:order_manager/app/ui/views/login/login_controller.dart';
+import 'package:order_manager/app/ui/views/login/login_provider.dart';
 import 'package:order_manager/core/theme/app_colors.dart';
 import 'package:provider/provider.dart';
 
@@ -82,42 +82,56 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: Center(
-          child: Container(
-            width: 350.0,
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundColor(context),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Título
-                Text(
-                  'Elan',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryConst,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: IntrinsicHeight(
+                  child: Center(
+                    child: Container(
+                      width: 350.0,
+                      // height: 400,
+                      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.backgroundColor(context),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Título
+                          Text(
+                            'Elan',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primaryConst,
+                            ),
+                          ),
+                          SizedBox(height: 25.0),
+                          // Usuario
+                          user,
+                          SizedBox(height: 25.0),
+                          // Contraseña
+                          password,
+                          SizedBox(height: 25.0),
+                          rememberPass,
+                          SizedBox(height: 25.0),
+                          //Boton
+                          button,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(height: 25.0),
-                // Usuario
-                user,
-                SizedBox(height: 25.0),
-                // Contraseña
-                password,
-                SizedBox(height: 25.0),
-                rememberPass,
-                SizedBox(height: 25.0),
-                //Boton
-                button,
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

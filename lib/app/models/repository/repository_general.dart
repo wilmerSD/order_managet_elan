@@ -8,10 +8,11 @@ class RepositoryGeneral {
       'ck_51146f79d10632467febf6b596c8acdb04491caf'; // reemplaza con tu clave real
   final String consumerSecret =
       'cs_065f008621c17d24f9ef8ef2f6d685c59eda517a'; // reemplaza con tu clave real
+  final String baseUrl = 'https://elan.pe/wp-json/wc/v3/orders';
 
   Future<List<ResponseListOrder>> getOrderCompleted(String status) async {
     final url = Uri.parse(
-      'https://elan.pe/wp-json/wc/v3/orders?status=$status&perPage=20,&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
+      '$baseUrl?status=$status&order=desc&per_page=100&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
     );
 
     final response = await http.get(url);
@@ -26,7 +27,7 @@ class RepositoryGeneral {
 
   Future<List<ResponseListOrder>> getOrderProcessing(String status) async {
     final url = Uri.parse(
-      'https://elan.pe/wp-json/wc/v3/orders?status=$status&order=asc&per_page=20&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
+      '$baseUrl?status=$status&order=asc&per_page=100&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
     );
 
     final response = await http.get(url);
@@ -45,7 +46,7 @@ class RepositoryGeneral {
 
   Future<OrderResponse> getOrderProcessingv1(String status) async {
     final url = Uri.parse(
-      'https://elan.pe/wp-json/wc/v3/orders?status=$status&order=asc&per_page=20&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
+      '$baseUrl?status=$status&order=asc&per_page=100&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
     );
 
     final response = await http.get(url);
@@ -62,12 +63,12 @@ class RepositoryGeneral {
     }
   }
 
-  Future<ResponseListOrder> postUpdateOrder(int orderId) async {
+  Future<ResponseListOrder> postUpdateOrder(int orderId, String status) async {
     final url = Uri.parse(
-      'https://elan.pe/wp-json/wc/v3/orders/$orderId?per_page=20&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
+      '$baseUrl/$orderId?per_page=20&consumer_key=$consumerKey&consumer_secret=$consumerSecret',
     );
 
-    final response = await http.post(url, body: {"status": "completed"});
+    final response = await http.post(url, body: {"status": status});
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

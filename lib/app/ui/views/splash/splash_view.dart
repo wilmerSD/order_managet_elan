@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:order_manager/app/ui/views/login/login_controller.dart';
+import 'package:order_manager/app/ui/views/login/login_provider.dart';
 import 'package:order_manager/app/ui/views/login/login_view.dart';
 import 'package:provider/provider.dart';
 
