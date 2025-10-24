@@ -176,6 +176,7 @@ class HomeController with ChangeNotifier {
       listNroOrders.addAll(
         listOrders.map((order) => (order.id ?? 0).toString()),
       );
+      // getJustRestaurant(filterType: selectedFilter);
     } catch (e) {
       print(e);
     } finally {
@@ -197,9 +198,10 @@ class HomeController with ChangeNotifier {
         listNroOrders.addAll(
           listOrders.map((order) => (order.id ?? 0).toString()),
         );
+        getJustRestaurant(filterType: selectedFilter);
       }
 
-      orderTotalProcessing = result.total;
+      // orderTotalProcessing = result.total;
     } catch (e) {
       CustomSnackbar.showSnackBarCustom(
         context,
@@ -213,7 +215,8 @@ class HomeController with ChangeNotifier {
   }
 
   void listenNewOrder(newOrder) async {
-    if (orderTotalProcessing < 100) {//estaba con 20
+    if (orderTotalProcessing < 100) {
+      //estaba con 20
       final pedidoMap = newOrder as Map<String, dynamic>;
       final nuevoPedido = ResponseListOrder.fromJson(pedidoMap);
       if (nuevoPedido.status == 'processing') {
@@ -221,6 +224,7 @@ class HomeController with ChangeNotifier {
         listOrdersOriginal.add(nuevoPedido);
         orderTotalProcessing += 1;
         listNroOrders.add((nuevoPedido.id ?? 0).toString());
+        getJustRestaurant();
       }
     }
   }
@@ -251,7 +255,6 @@ class HomeController with ChangeNotifier {
           listOrders.removeWhere((order) => order.id == orderId);
           listOrdersOriginal.removeWhere((order) => order.id == orderId);
           listNroOrders.remove(orderId.toString());
-          
         }
         // if (nroOrder == 'Todos') {
         //   getOrderProcessing(
@@ -279,15 +282,14 @@ class HomeController with ChangeNotifier {
       orderTotalProcessing -= 1;
       // 2. eliminar de listOrders
       listOrders.removeAt(index);
-      
+
       // eliminar de la lista original usando id (NO por index)
       // listOrdersOriginal.removeAt(index);
       listOrdersOriginal.removeWhere((order) => order.id == orderId);
 
       // 3. eliminar de listNroOrders por valor (conversión a string)
       listNroOrders.remove(orderIdToRemove?.toString());
-      
-      
+
       // listOrders.removeWhere((order) => order.id == orderId);
     } else {
       listOrders[index].status = status;
@@ -318,6 +320,79 @@ class HomeController with ChangeNotifier {
     return preparingColorMap[label] ?? Colors.grey;
   }
 
+  List<ResponseListOrder> listOrdersCopy = [];
+
+  void getJustRestaurant({String filterType = 'all'}) {
+    // Guardamos la lista original la primera vez (para poder restaurarla)
+    if (listOrdersCopy.isEmpty) {
+      listOrdersCopy = List.from(listOrders);
+    }
+
+    // Filtramos según el tipo de filtro
+    switch (filterType) {
+      case 'menu': // solo los que tienen Menú
+        // listOrdersCopy =
+        //     listOrders.where((order) {
+        //       final menuName = getMenuName(order.lineItems!);
+        //       return menuName.startsWith('Menú') || menuName.startsWith('menú');
+        //     }).toList();
+        listOrders =
+            listOrdersCopy.where((order) {
+              final menuName = getMenuName(order.lineItems!);
+              return (menuName.startsWith('Menú') || menuName.startsWith('menú') || menuName.startsWith('Carta') || menuName.startsWith('carta'));
+            }).toList();
+        break;
+
+      case 'no_menu': // solo los que NO tienen Menú
+        // listOrdersCopy =
+        //     listOrders.where((order) {
+        //       final menuName = getMenuName(order.lineItems!);
+        //       return !(menuName.startsWith('Menú') ||
+        //           menuName.startsWith('menú'));
+        //     }).toList();
+        listOrders =
+            listOrdersCopy.where((order) {
+              final menuName = getMenuName(order.lineItems!);
+              return !(menuName.startsWith('Menú') ||
+                  menuName.startsWith('menú') || menuName.startsWith('Carta') || menuName.startsWith('carta'));
+            }).toList();
+        break;
+
+      case 'all': // todos
+      default:
+        listOrders = List.from(listOrdersCopy);
+        // listOrdersCopy = List.from(listOrders);
+        break;
+    }
+    orderTotalProcessing = listOrders.length;
+    notifyListeners();
+  }
+
+  // /// Devuelve el nombre del primer item que empieza con "Menú", o '' si no hay
+  // String getMenuName(List<LineItem> lineItems) {
+  //   final found = lineItems.firstWhere(
+  //     (item) =>
+  //         item.name != null &&
+  //         item.name!.trim().toLowerCase().startsWith('menú'),
+  //     orElse: () => LineItem(name: ''),
+  //   );
+  //   return found.name ?? '';
+  // }
+
+  /// Devuelve el nombre del primer item que empieza con "Menú" o "Carta", o '' si no hay
+  String getMenuName(List<LineItem> lineItems) {
+    final found = lineItems.firstWhere(
+      (item) {
+        if (item.name == null) return false;
+        final name = item.name!.trim().toLowerCase();
+        return name.startsWith('menú') || name.startsWith('carta');
+      },
+      orElse: () => LineItem(name: ''),
+    );
+    return found.name ?? '';
+  }
+
+
   // void filterNroOrder(String? nroOrder) {
   //   if (nroOrder != null) {
   //     this.nroOrder = nroOrder;
@@ -346,5 +421,14 @@ class HomeController with ChangeNotifier {
               .where((order) => (order.id ?? 0).toString() == this.nroOrder)
               .toList();
     }
+  }
+
+  String _selectedFilter = 'all';
+  String get selectedFilter => _selectedFilter;
+
+  void setSelectedFilter(String filter) {
+    _selectedFilter = filter;
+    getJustRestaurant(filterType: filter);
+    notifyListeners();
   }
 }

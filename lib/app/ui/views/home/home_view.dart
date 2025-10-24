@@ -41,7 +41,7 @@ class _HomeViewState extends State<HomeView> {
         'processing,prepamarillo,prepverde,prepazul,preprojo',
       );
       socketService.socket.on('nuevo_pedido', (data) {
-        homeController.listenNewOrder(data);//Evento desde woocomerce
+        homeController.listenNewOrder(data); //Evento desde woocomerce
       });
 
       socketService.socket.on('order_delivered_emit', (data) {
@@ -63,7 +63,14 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     final homeController = Provider.of<HomeController>(context);
-    final prefs = PreferencesUser();
+    print("homeView");
+
+    final width = MediaQuery.of(context).size.width;
+    int getCrossAxisCount(double width, double itemWidth) {
+      return (width / itemWidth).floor();
+    }
+
+    final crossAxisCount = getCrossAxisCount(width, 300);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor(context),
@@ -111,7 +118,10 @@ class _HomeViewState extends State<HomeView> {
                             final orderId = order.id ?? 0;
                             final customerName =
                                 order.billing?.firstName ?? 'Sin nombre';
-                            final orderNote =  order.customerNote?.isNotEmpty == true ? order.customerNote : 'Ninguno'; 
+                            final orderNote =
+                                order.customerNote?.isNotEmpty == true
+                                    ? order.customerNote
+                                    : 'Ninguno';
                             final customerLastName =
                                 order.billing?.lastName ?? '';
                             final items = order.lineItems ?? [];

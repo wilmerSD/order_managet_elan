@@ -9,10 +9,7 @@ import 'package:order_manager/core/theme/app_text_style.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-
-  const CustomAppBar({
-    super.key,
-  });
+  const CustomAppBar({super.key});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -43,50 +40,106 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
     return AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        backgroundColor: AppColors.primaryConst,
-        title: logo,
-        actions: [
-          Consumer<HomeController>(
-            builder: (context, timeProvider, child) {
-              return Text(
-                timeProvider.currentTime,
-                style: AppTextStyle(context).bold15(),
-              );
-            },
-          ),
-          SizedBox(width: 20.0),
-          Text(
-            context.read<HomeController>().fullName,
-            style: AppTextStyle(context).bold15(),
-          ),
-          SizedBox(width: 20.0),
-          darkMode,
-          SizedBox(width: 20.0),
-          InkWell(
-            onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialogComponent(
-                    onTapButton: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginView(),
-                        ),
-                      );
-                    },
-                    title: "¿Seguro que quieres salir de tasking?",
-                  );
-                },
-              );
-            },
-            child: Text('Cerrar sesión', style: AppTextStyle(context).bold15()),
-          ),
-          SizedBox(width: 20.0),
-        ],
-      );
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      backgroundColor: AppColors.primaryConst,
+      title: Consumer<HomeController>(
+        builder: (context, provider, child) {
+          return Row(
+            children: [
+              logo,
+              SizedBox(width: 10.0),
+              _textButton(context, 'all', 'Todos'),
+              _textButton(context, 'no_menu', 'Cafetería'),
+              _textButton(context, 'menu', 'Comedor'),
+              // _textButton(context,'all', () {
+              //   provider.getJustRestaurant(filterType: 'all');
+              //   provider.setSelectedFilter('all');
+              // }, 'Todos'),
+              // _textButton('no_menu', () {
+              //   provider.getJustRestaurant(filterType: 'no_menu');
+              //   provider.setSelectedFilter('no_menu');
+              // }, 'Cafeteria'),
+              // _textButton('menu', () {
+              //   provider.getJustRestaurant(filterType: 'menu');
+              //   provider.setSelectedFilter('menu');
+              // }, 'Comedor'),
+            ],
+          );
+        },
+      ),
+      actions: [
+        Consumer<HomeController>(
+          builder: (context, timeProvider, child) {
+            return Text(
+              timeProvider.currentTime,
+              style: AppTextStyle(context).bold15(),
+            );
+          },
+        ),
+        SizedBox(width: 20.0),
+        Text(
+          context.read<HomeController>().fullName,
+          style: AppTextStyle(context).bold15(),
+        ),
+        SizedBox(width: 20.0),
+        darkMode,
+        SizedBox(width: 20.0),
+        InkWell(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialogComponent(
+                  onTapButton: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginView(),
+                      ),
+                    );
+                  },
+                  title: "¿Seguro que quieres salir de tasking?",
+                );
+              },
+            );
+          },
+          child: Text('Cerrar sesión', style: AppTextStyle(context).bold15()),
+        ),
+        SizedBox(width: 20.0),
+      ],
+    );
   }
+}
+
+// Widget _textButton(String filterType, VoidCallback onPressed, String text) {
+//   return TextButton(
+//     onPressed: onPressed,
+//     child: Text(text, style: TextStyle(color: Colors.white, fontSize: 15.0)),
+//   );
+// }
+
+Widget _textButton(BuildContext context, String filterType, String text) {
+  final provider = Provider.of<HomeController>(context);
+  final isSelected = provider.selectedFilter == filterType;
+
+  return TextButton(
+    onPressed: () => provider.setSelectedFilter(filterType),
+    style: TextButton.styleFrom(
+      backgroundColor: isSelected ? Colors.white24 : Colors.transparent,
+      side: BorderSide(
+        color: isSelected ? Colors.white : Colors.transparent,
+        width: 1.5,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+    child: Text(
+      text,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 15.0,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      ),
+    ),
+  );
 }

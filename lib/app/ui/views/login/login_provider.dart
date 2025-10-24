@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:order_manager/app/routes/app_routes_name.dart";
 import "package:order_manager/app/ui/views/home/home_provider.dart";
 import "package:order_manager/app/ui/views/home/home_view.dart";
 import "package:order_manager/core/helpers/custom_snackbar.dart";
@@ -105,11 +107,11 @@ class LoginController with ChangeNotifier {
 
       ctrlEmailText.clear();
       ctrlPasswordText.clear();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomeView()),
-      );
+      context.go(AppRoutesName.HOME);
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => HomeView()),
+      // );
     } else {
       CustomSnackbar.showSnackBarCustom(
         context,

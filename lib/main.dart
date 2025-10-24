@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:order_manager/app/routes/go_router_app.dart';
 import 'package:order_manager/app/ui/views/home/home_provider.dart';
 import 'package:order_manager/app/ui/views/login/login_provider.dart';
-import 'package:order_manager/app/ui/views/splash/splash_view.dart';
 import 'package:order_manager/core/preferences/shared_preferences.dart';
 import 'package:order_manager/core/preferences/theme_provider.dart';
 import 'package:order_manager/core/service/sokect_service.dart';
@@ -34,14 +34,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Elan',
       theme: ThemeApp(
                 darkMode:
                     Provider.of<ThemeProvider>(context, listen: true).themeDark)
             .getTheme(),
-      home: const SplashView(),
+      routerConfig: appRouter, 
     );
   }
 }
